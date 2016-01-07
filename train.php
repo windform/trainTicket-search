@@ -1,14 +1,38 @@
-#PHP模拟火车票查询功能
-
-- **data1.json：提供参考的json数据字段**
-- **train.php：查询界面**
->核心技术：PHP、ajax、jQuery、bootstrap、json
-
-
-
-###train.php
-```php
-		<div class="container">
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>火车时刻表查询</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<style>
+		.mask{
+			position:fixed;
+			left:50%;
+			top:40%;
+			width:100px;
+			height:100px;
+			margin-left:-50px;
+			border-radius:10px;
+			background:rgba(0,0,0,.5);
+			z-index:20;
+			box-shadow: 0px 0px 20px rgba(0,0,0,.5)
+			}
+		.mask>img{
+			position:absolute;
+			left:50%;
+			top:50%;
+			margin-left:-25px;
+			margin-top:-25px;
+			}
+	</style>
+  </head>
+  <body>
+  
+  <!--	<div class='mask'><img width='50' height='50' src='loading.gif' alt='加载查询'/></div>-->
+	<!--http://op.juhe.cn/onebox/train/query_ab-->
+	<div class="container">
 		<div class="row">
 			<div class="col-md-6 col-md-offset-3">
 				<form class="form-horizontal" action="http://op.juhe.cn/onebox/train/query_ab" method="get">
@@ -57,10 +81,12 @@
 			</div>
 		</div>
 	</div>
-```
-###ajax请求核心代码
-```php
-$(function(){
+
+
+    <script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script>
+		$(function(){
 			$(".dis").css("display","none");
 			$("input[type='radio']").click(function(){
 				if($("#inlineCheckbox1").is(":checked")){
@@ -107,8 +133,6 @@ $(function(){
 				return false;
 				})
 			})
-```
-
-###效果图
-
-![Alt text](./train.jpg)
+	</script>
+  </body>
+</html>
