@@ -2,6 +2,7 @@
 
 - **data1.json：提供参考的json数据字段**
 - **train.php：查询界面**
+
 >核心技术：PHP、ajax、jQuery、bootstrap、json
 
 
@@ -60,33 +61,59 @@
 ```
 ###ajax请求核心代码
 ```php
-$(function(){
-			$(".dis").css("display","none");
+
+		$(function(){
+			//$(".dis").css("display","none");
+			$("#inlineCheckbox1").click(function(){
+						$(".dis1").css("display","block");
+						$(".dis").css("display","none");
+						$("#from").val("");
+						$("#to").val("");
+				});
+			$("#inlineCheckbox1").trigger('click');
 			$("input[type='radio']").click(function(){
 				if($("#inlineCheckbox1").is(":checked")){
 						$(".dis1").css("display","block");
 						$(".dis").css("display","none");
 						$("#from").val("");
 						$("#to").val("");
+						//address='http://op.juhe.cn/onebox/train/query?train='+$("#train").val()+'&key='+$("#key").val();
 					}else if($("#inlineCheckbox2").is(":checked")){
 						$(".dis1").css("display","none");
 						$(".dis").css("display","block");
 						$("#train").val("");
+						//address='http://op.juhe.cn/onebox/train/query_ab?train='+$("#train").val()+'&from='+$("#from").val()+'&to='+$("#to").val()+'&key='+$("#key").val();
 						}
 				})
 			$("#submit").click(function(){
-				$.ajax({
-					//http://op.juhe.cn/onebox/train/query_ab?train='+$("#train").val()+'&key='+$("#key").val(),
-					url:'http://op.juhe.cn/onebox/train/query_ab?train='+$("#train").val()+'&from='+$("#from").val()+'&to='+$("#to").val()+'&key='+$("#key").val(),
+				
+					var address;
+					if($("#inlineCheckbox1").is(":checked")){
+						address='http://op.juhe.cn/onebox/train/query?train='+$("#train").val()+'&key='+$("#key").val();
+					}else if($("#inlineCheckbox2").is(":checked")){
+						address='http://op.juhe.cn/onebox/train/query_ab?from='+$("#from").val()+'&to='+$("#to").val()+'&key='+$("#key").val();
+						}
+					//定义一个变量，根据radio的checked属性来给变量address赋值，接在把它赋值给ajax的url
+				
+				var ajaxTimeoutTest =$.ajax({
+					url:address,
 					type:'get',
+					timeout:2000,
 					dataType:'JSONP',
 					beforeSend: function(){
 						$("#result").html("<div class='mask'><img width='50' height='50' src='loading.gif' alt='加载查询'/></div>")
 						
 						},
 					success:function(result){
+						//var ad='http://op.juhe.cn/onebox/train/query?train='+$("#train").val()+'&key='+$("#key").val();
+						//alert(address);
 						var arr=result.result.list;
 						var data='<table class="table table-bordered table-striped table-hover">'+'<thead>'+'<tr>'+'<th>车次</th>'+'<th>类型</th>'+'<th>始发站</th>'+'<th>终点站</th>'+' <th>出发时间</th>'+' <th>到达时间</th>'+'<th>时长</th>'+'</tr>'+'</thead>'+'<tbody>';
+						
+						var pattern=/query_ab/i;
+						var pan=pattern.test(address);
+						//根据车次查询的特有字段'auery_ab'来匹配政策表达式，如果包含，返回true；否则返回false；进而得出展示哪些数据需要被渲染
+						if(pan==true){
 							for(var i=0;i<arr.length;i++){
 								data+='<tr>';
 								for(j in arr[i]){
@@ -96,19 +123,42 @@ $(function(){
 								data+='</tr>';
 									
 								}
+							
+						}else{
+								data+='<tr>'
+									+'<td>'+arr['train_no']+'</td>'
+									+'<td>'+arr['train_type']+'</td>'
+									+'<td>'+arr['start_station']+'</td>'
+									+'<td>'+arr['end_station']+'</td>'
+									+'<td>'+arr['start_time']+'</td>'
+									+'<td>'+arr['end_time']+'</td>'
+									+'<td>'+arr['run_time']+'</td>'
+								'</tr>';
+							}
+								
+		
 							data+='</tbody>';
 							data+='</table>';	
 						$("#result").html(data);
 						},
-					error:function(){
+					/*error:function(){
 						$("#result").html("对不起,请求失败啦");
+						},*/
+					error:function(XMLHttpRequest,status){
+						if(status=='timeout'){
+							//ajaxTimeoutTest.absort();
+							$("#result").html("查询失败");
+							}
+						
 						}
 					})
 				return false;
 				})
 			})
+	
 ```
 
 ###效果图
 
+![Alt text](./train1.jpg)
 ![Alt text](./train.jpg)
